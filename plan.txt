@@ -1,0 +1,97 @@
+COGNISPACE - An Interactive Knowledge Operating System
+Plan written 2026-11-10. Keep this file current if the plan changes.
+
+GOAL
+A single self-contained web app that is (1) a cinematic scroll-driven 3D intro,
+(2) a personal productivity system, (3) an interactive learning environment built
+around a 3D knowledge graph. No backend, no external APIs, no auth, zero cost.
+Run with: npm install && npm run dev
+
+STACK
+- React 18 + TypeScript + Vite
+- Tailwind CSS 3 (design tokens in tailwind.config.js) + Framer Motion for UI motion
+- three + @react-three/fiber + @react-three/drei + @react-three/postprocessing
+- Lenis for smooth scrolling in the intro
+- zustand (persist middleware) -> one localStorage key "cognispace:v1"
+- @dnd-kit/core for drag and drop (works on touch, unlike HTML5 DnD)
+- Fonts bundled from npm via @fontsource (works offline): Instrument Serif (display),
+  a grotesk for UI, JetBrains Mono for numerals and micro labels
+- Charts are hand-written SVG (no chart library)
+Deviation from the brief: no GSAP/ScrollTrigger. Scroll progress comes straight from
+Lenis into a Framer Motion value and into the R3F frame loop, so a second animation
+library would add weight without adding anything.
+
+VISUAL IDENTITY - "observatory instrument"
+- Near-black ink background with a warm undertone, hairline borders, corner ticks on
+  panels, mono uppercase micro labels with index numbers ("01 / TODAY").
+- Accents: solar amber (primary), ion teal (learning), ember coral (alerts/priority).
+  Deliberately no purple-gradient SaaS look.
+- Serif italic display type against a quiet grotesk; film grain overlay everywhere.
+
+STRUCTURE
+1. Intro / hero (about 600vh of scroll, sticky full-screen canvas)
+   - Knowledge core: ~30k shader points that morph by scroll progress between three
+     shapes: sphere shell -> spiral galaxy -> clustered constellation (the graph).
+   - Inner fresnel core, orbiting dust, fake volumetric light rays, starfield with
+     depth-based softness (cheap depth of field), bloom + noise + vignette post FX.
+   - Mouse: parallax on the camera, the shell bulges toward the pointer.
+   - Scroll: camera path dives in, orbits, pulls back as the core becomes a constellation.
+   - Kinetic typography in an HTML overlay, word-by-word, tied to scroll progress.
+   - CTA "Enter Cognispace" -> transition into the app. "Skip intro" always visible.
+   - Returning visitors land in the app; Settings has "Replay intro".
+2. App shell
+   - Desktop: left sidebar grouped Plan / Learn / Reflect. Mobile: bottom tab bar + More sheet.
+   - Views: Today, Tasks, Habits, Goals, Week, Knowledge Graph, Library, Focus,
+     Analytics, Settings.
+3. Productivity core
+   - Today: day score (tasks 40, habits 30, focus 20, learning 10) with breakdown,
+     today's tasks, habits, schedule, goal progress, next concept to learn.
+   - Tasks: list + kanban, priorities, due dates, drag and drop, filters, search,
+     optional link to a concept.
+   - Habits: daily check-in, current/best streak, 16-week heatmap per habit.
+   - Goals: milestones, progress, target date.
+   - Focus: Pomodoro timer (focus / short / long), linkable to a task or concept,
+     survives view switches and refresh (stores an end timestamp), session log.
+   - Week: 7-day planner, drag tasks between days, timed events.
+4. Knowledge layer - topic: "How Modern AI Actually Works"
+   - ~28 seeded concepts in 7 clusters (Foundations, Representation, Transformer,
+     Training, Inference, Generative, Frontier) with real relationships as edges.
+   - 3D graph: force layout computed in JS, floating nodes, pulsing edges (shader),
+     hover labels, click opens the learning card. Orbit controls.
+   - Learning card: explanation in 3 progressive steps, an interactive visualization
+     (neuron, network, gradient descent, 3D loss surface, tokenizer, 3D embedding
+     space, attention, sampling temperature, diffusion, context window, ...),
+     a quiz with feedback, a reflection note that is saved, mark as mastered.
+   - Users can add their own concepts and connections, and delete their own.
+   - Library: searchable/filterable list of all concepts with mastery state.
+5. Analytics
+   - Stat tiles, focus minutes per day, tasks completed, habit consistency,
+     day score trend, learning progress by cluster.
+6. Settings
+   - Name, timer lengths, daily focus target, reduced motion, replay intro,
+     export/import JSON, load demo data, erase everything.
+
+DATA
+- First visit seeds believable demo data (dated relative to today) so nothing is empty;
+  every list still has a designed empty state for after "erase everything".
+
+VERIFICATION (done by Claude before calling it finished)
+- npm run build passes (tsc strict + vite build).
+- Open in Chrome: scroll the intro, enter the app, click through every view, add/edit/
+  drag items, open a learning card, answer a quiz, run the timer, refresh and confirm
+  persistence, check the browser console for errors, check a phone-width viewport.
+
+STATUS (2026-11-10): built and verified.
+Changes made while building:
+- View switching has no exit animation (a waiting exit made it feel slow). Enter only.
+- Drag and drop targets whatever is under the pointer, not what the lifted card overlaps.
+- Graph labels fade with depth so the near side stays readable; phones get a further camera.
+- The Chrome extension was not connected, so verification ran in headless Chrome
+  (puppeteer-core, kept in the session scratchpad, not a project dependency):
+  13 interaction checks pass, all 28 cards open with every control exercised,
+  no console errors, desktop 1440x900 and phone 390x844 screenshots reviewed.
+- Not verified by hand: real touch dragging on a phone, and the timer chime sound.
+
+NOT IN SCOPE
+- Git repo / GitHub Pages deploy / README post (that is /ship, only when asked).
+- Sync, accounts, any network API.
