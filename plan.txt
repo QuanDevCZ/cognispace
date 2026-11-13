@@ -95,3 +95,25 @@ Changes made while building:
 NOT IN SCOPE
 - Git repo / GitHub Pages deploy / README post (that is /ship, only when asked).
 - Sync, accounts, any network API.
+
+----------------------------------------------------------------------
+2026-11-13 — OVERNIGHT RUN: POST VIDEO
+Goal: record a smooth ~30 s 720p walkthrough for the launch post and save it as
+C:\Users\Dell\Videos\cognispace-post.mp4.
+Storyboard: intro headline -> scroll the whole intro -> Enter Cognispace -> Today ->
+Knowledge Graph -> hover + open Attention -> scroll card to the attention viz ->
+click "street", "tired", "it" -> close -> end on the graph.
+Done means (all checkable):
+- MP4 exists, H.264, 1280x720, 25-40 s long
+- capture averaged >= 25 fps; recorder log shows every step incl. "hover found: true"; exit 0
+- zero page errors during recording
+- five key frames saved to .night/frames/ for review
+- npm run build passes; git diff main -- src is empty
+Plan: fresh build + vite preview on :4173 -> add hover probe to the recorder -> record ->
+retry fixes (max 3 per failure) -> probe MP4 + extract frames -> checks -> morning report.
+Out of scope: src/ changes, the GitHub Pages fix, any push/deploy/post, projekty.md.
+Allowed extras (user, 2026-11-13): scratchpad recorder tools; one output file in Videos.
+Branch: night/2026-11-13-post-video. Notes in .night/ (local only, git-excluded).
+Background: earlier attempts 2026-11-13 — 1080p frame capture ran 3x slow (1:44, ~13 fps);
+Chrome tab capture gives a blank fake screen when automated; 720p frame capture hit 33 fps
+but the Attention node click missed (offset from its label differs at 720p).
