@@ -117,3 +117,23 @@ Branch: night/2026-11-13-post-video. Notes in .night/ (local only, git-excluded)
 Background: earlier attempts 2026-11-13 — 1080p frame capture ran 3x slow (1:44, ~13 fps);
 Chrome tab capture gives a blank fake screen when automated; 720p frame capture hit 33 fps
 but the Attention node click missed (offset from its label differs at 720p).
+
+----------------------------------------------------------------------
+2026-11-21 — INSTALLABLE PWA (personal daily use)
+Goal: install Cognispace from the live GitHub Pages URL on phone and desktop; works
+offline; data survives; start with real data instead of demo data.
+Branch: feat/pwa, merge to main when verified.
+Steps:
+1. Icons: public/icon.svg (the favicon) -> pwa-192x192, pwa-512x512, maskable-icon-512x512,
+   apple-touch-icon-180x180 PNGs via one-off npx @vite-pwa/assets-generator (not a dependency).
+2. vite-plugin-pwa (free devDependency): registerType autoUpdate (timer stores an end
+   timestamp, so reload-on-update is safe); manifest name/short_name Cognispace, start_url
+   and scope './', display standalone, colors #060709, 3 icons (one maskable); workbox
+   precaches js/css/html/fonts/svg/png, max file 4 MB, navigateFallback index.html.
+3. index.html: apple-touch-icon link + apple-mobile-web-app meta tags. Keep SVG favicon.
+4. src/main.tsx: navigator.storage.persist() once so the browser doesn't evict localStorage.
+   Settings export/import backup stays the safety net.
+5. npm run build; npm run preview + Chrome check (manifest, SW, offline reload, console);
+   commit on feat/pwa, merge to main and push with the user's OK -> Pages redeploys.
+User after: install from the live URL, then Settings -> Erase everything to drop demo data.
+Data is per device (no sync).

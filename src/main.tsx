@@ -8,6 +8,9 @@ import '@fontsource/jetbrains-mono/500.css';
 import './index.css';
 import App from './App';
 
+// Ask the browser not to evict localStorage (all user data lives there). Fire and forget.
+navigator.storage?.persist?.().catch(() => {});
+
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />
